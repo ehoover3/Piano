@@ -12,12 +12,44 @@ const blackNotes = [
   { note: "A#", position: 5 },
 ];
 
+// Frequencies for notes (around the 4th octave)
+const noteFrequencies: Record<string, number> = {
+  C: 261.63,
+  "C#": 277.18,
+  D: 293.66,
+  "D#": 311.13,
+  E: 329.63,
+  F: 349.23,
+  "F#": 369.99,
+  G: 392.0,
+  "G#": 415.3,
+  A: 440.0,
+  "A#": 466.16,
+  B: 493.88,
+};
+
 export default function Home() {
   const [playedNote, setPlayedNote] = useState<string | null>(null);
+
+  const playSound = (note: string) => {
+    const audioContext = new (window.AudioContext || (window as any).webkitAudioContext)();
+    const oscillator = audioContext.createOscillator();
+    const gainNode = audioContext.createGain();
+
+    oscillator.type = "sine"; // You can change to 'square', 'triangle', etc.
+    oscillator.frequency.value = noteFrequencies[note]; // Set frequency
+    oscillator.connect(gainNode);
+    gainNode.connect(audioContext.destination);
+
+    oscillator.start();
+    gainNode.gain.exponentialRampToValueAtTime(0.0001, audioContext.currentTime + 1); // Fade out
+    oscillator.stop(audioContext.currentTime + 1); // Stop after 1 second
+  };
 
   const handlePlayNote = (note: string) => {
     setPlayedNote(note);
     console.log("Playing note:", note);
+    playSound(note);
   };
 
   return (
@@ -55,7 +87,7 @@ export default function Home() {
       </div>
 
       {playedNote && (
-        <div className='mt-4 text-lg mt-6'>
+        <div className='mt-6 text-lg'>
           Played: <span className='font-semibold'>{playedNote}</span>
         </div>
       )}
