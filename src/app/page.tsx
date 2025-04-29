@@ -30,11 +30,26 @@ const baseFrequencies: Record<string, number> = {
   B: 493.88,
 };
 
+// Major scales
+const majorScales: Record<string, string[]> = {
+  C: ["C", "D", "E", "F", "G", "A", "B"],
+  "C#": ["C#", "D#", "F", "F#", "G#", "A#", "C"],
+  D: ["D", "E", "F#", "G", "A", "B", "C#"],
+  "D#": ["D#", "F", "G", "G#", "A#", "C", "D"],
+  E: ["E", "F#", "G#", "A", "B", "C#", "D#"],
+  F: ["F", "G", "A", "A#", "C", "D", "E"],
+  "F#": ["F#", "G#", "A#", "B", "C#", "D#", "F"],
+  G: ["G", "A", "B", "C", "D", "E", "F#"],
+  "G#": ["G#", "A#", "C", "C#", "D#", "F", "G"],
+  A: ["A", "B", "C#", "D", "E", "F#", "G#"],
+  "A#": ["A#", "C", "D", "D#", "F", "G", "A"],
+  B: ["B", "C#", "D#", "E", "F#", "G#", "A#"],
+};
+
 // Function to get frequency for any note in any octave
 const getFrequency = (note: string, octave: number) => {
   const baseOctave = 4;
   const semitoneRatio = Math.pow(2, 1 / 12); // 12th root of 2
-  const noteOrder = ["C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"];
   const baseFreq = baseFrequencies[note];
   const distance = (octave - baseOctave) * 12;
   return baseFreq * Math.pow(semitoneRatio, distance);
@@ -42,6 +57,7 @@ const getFrequency = (note: string, octave: number) => {
 
 export default function Home() {
   const [playedNote, setPlayedNote] = useState<string | null>(null);
+  const [selectedScale, setSelectedScale] = useState<string | null>(null);
 
   const playSound = (note: string, octave: number) => {
     const audioContext = new (window.AudioContext || (window as any).webkitAudioContext)();
@@ -49,7 +65,7 @@ export default function Home() {
     const gainNode = audioContext.createGain();
 
     oscillator.type = "sine";
-    oscillator.frequency.value = getFrequency(note, octave); // Set frequency
+    oscillator.frequency.value = getFrequency(note, octave);
     oscillator.connect(gainNode);
     gainNode.connect(audioContext.destination);
 
@@ -60,7 +76,6 @@ export default function Home() {
 
   const handlePlayNote = (note: string, octave: number) => {
     setPlayedNote(`${note}${octave}`);
-    console.log("Playing note:", note, "Octave:", octave);
     playSound(note, octave);
   };
 
@@ -68,12 +83,36 @@ export default function Home() {
     <div className='flex flex-col items-center justify-center min-h-screen p-4 bg-gray-100'>
       <h1 className='text-2xl font-bold mb-4'>Digital Keyboard (4 Octaves + C7)</h1>
 
+      {/* Scale selection buttons */}
+      <div className='flex flex-wrap justify-center gap-2 mb-6'>
+        {Object.keys(majorScales).map((scale) => (
+          <button key={scale} onClick={() => setSelectedScale(scale)} className={`px-3 py-1 rounded-md border ${selectedScale === scale ? "bg-blue-500 text-white" : "bg-white text-black"}`}>
+            {scale} Major
+          </button>
+        ))}
+        {selectedScale && (
+          <button onClick={() => setSelectedScale(null)} className='px-3 py-1 rounded-md border bg-red-400 text-white'>
+            Clear
+          </button>
+        )}
+      </div>
+
+      {/* Piano */}
       <div className='relative'>
         {/* White keys */}
         <div className='flex'>
           {octaves.map((octave) =>
-            whiteNotesBase.map((note, idx) => (
-              <button key={`${note}${octave}`} onClick={() => handlePlayNote(note, octave)} className='relative w-16 h-64 bg-white border border-gray-400 rounded-md shadow-md active:bg-gray-300 flex items-end justify-center pb-2'>
+            whiteNotesBase.map((note) => (
+              <button
+                key={`${note}${octave}`}
+                onClick={() => handlePlayNote(note, octave)}
+                className={`relative w-16 h-64 border border-gray-400 rounded-md shadow-md active:bg-gray-300 flex items-end justify-center pb-2 ${
+                  selectedScale && majorScales[selectedScale]?.includes(note)
+                    ? selectedScale === note
+                      ? "bg-red-400" // Root note
+                      : "bg-blue-300" // Other scale notes
+                    : "bg-white"
+                }`}>
                 <span className='text-xs text-gray-600'>
                   {note}
                   {octave}
@@ -82,7 +121,7 @@ export default function Home() {
             ))
           )}
           {/* Add final C7 key */}
-          <button key='C7' onClick={() => handlePlayNote("C", 7)} className='relative w-16 h-64 bg-white border border-gray-400 rounded-md shadow-md active:bg-gray-300 flex items-end justify-center pb-2'>
+          <button key='C7' onClick={() => handlePlayNote("C", 7)} className={`relative w-16 h-64 border border-gray-400 rounded-md shadow-md active:bg-gray-300 flex items-end justify-center pb-2 ${selectedScale && majorScales[selectedScale]?.includes("C") ? (selectedScale === "C" ? "bg-red-400" : "bg-blue-300") : "bg-white"}`}>
             <span className='text-xs text-gray-600'>C7</span>
           </button>
         </div>
@@ -98,7 +137,10 @@ export default function Home() {
               return (
                 <div key={`${blackKey.note}${octave}`} className='relative w-16'>
                   <div className='flex justify-end'>
-                    <button onClick={() => handlePlayNote(blackKey.note, octave)} className='pointer-events-auto w-10 h-40 bg-black rounded-b-md shadow-md -mb-0.5 active:bg-gray-800 flex items-end justify-center pb-1' style={{ marginRight: "-0.5rem", zIndex: 10 }}>
+                    <button
+                      onClick={() => handlePlayNote(blackKey.note, octave)}
+                      className={`pointer-events-auto w-10 h-40 rounded-b-md shadow-md -mb-0.5 active:bg-gray-800 flex items-end justify-center pb-1 ${selectedScale && majorScales[selectedScale]?.includes(blackKey.note) ? (selectedScale === blackKey.note ? "bg-red-500" : "bg-blue-500") : "bg-black"}`}
+                      style={{ marginRight: "-0.5rem", zIndex: 10 }}>
                       <span className='text-[10px] text-white'>
                         {blackKey.note}
                         {octave}
@@ -114,6 +156,7 @@ export default function Home() {
         </div>
       </div>
 
+      {/* Played note display */}
       {playedNote && (
         <div className='mt-6 text-lg'>
           Played: <span className='font-semibold'>{playedNote}</span>
