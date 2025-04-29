@@ -2,19 +2,17 @@
 
 import { useState } from "react";
 
-const octaves = [3, 4, 5, 6]; // Main octaves
+const octaves = [3, 4, 5, 6];
 
 const whiteNotesBase = ["C", "D", "E", "F", "G", "A", "B"];
 const blackNotesBase = [
   { note: "C#", position: 0 },
   { note: "D#", position: 1 },
-  // No black key between E and F
   { note: "F#", position: 3 },
   { note: "G#", position: 4 },
   { note: "A#", position: 5 },
 ];
 
-// Frequencies for base octave (4th octave)
 const baseFrequencies: Record<string, number> = {
   C: 261.63,
   "C#": 277.18,
@@ -30,7 +28,6 @@ const baseFrequencies: Record<string, number> = {
   B: 493.88,
 };
 
-// Major scales
 const majorScales: Record<string, string[]> = {
   C: ["C", "D", "E", "F", "G", "A", "B"],
   "C#": ["C#", "D#", "F", "F#", "G#", "A#", "C"],
@@ -46,10 +43,17 @@ const majorScales: Record<string, string[]> = {
   B: ["B", "C#", "D#", "E", "F#", "G#", "A#"],
 };
 
-// Function to get frequency for any note in any octave
+const enharmonicMap: Record<string, string> = {
+  Bb: "A#",
+  Eb: "D#",
+  Ab: "G#",
+  Db: "C#",
+  Gb: "F#",
+};
+
 const getFrequency = (note: string, octave: number) => {
   const baseOctave = 4;
-  const semitoneRatio = Math.pow(2, 1 / 12); // 12th root of 2
+  const semitoneRatio = Math.pow(2, 1 / 12);
   const baseFreq = baseFrequencies[note];
   const distance = (octave - baseOctave) * 12;
   return baseFreq * Math.pow(semitoneRatio, distance);
@@ -79,22 +83,38 @@ export default function Home() {
     playSound(note, octave);
   };
 
+  const getKeyColor = (note: string) => {
+    if (!selectedScale) return "";
+    if (selectedScale === note) return "#248232"; // Root note green
+    if (majorScales[selectedScale]?.includes(note)) return "#258EA6"; // Other scale notes teal
+    return "";
+  };
+
+  const handleSelectScale = (note: string) => {
+    const mappedNote = enharmonicMap[note] || note;
+    setSelectedScale(mappedNote);
+  };
+
   return (
     <div className='flex flex-col items-center justify-center min-h-screen p-4 bg-gray-100'>
       <h1 className='text-2xl font-bold mb-4'>Digital Keyboard (4 Octaves + C7)</h1>
 
       {/* Scale selection buttons */}
-      <div className='flex flex-wrap justify-center gap-2 mb-6'>
-        {Object.keys(majorScales).map((scale) => (
-          <button key={scale} onClick={() => setSelectedScale(scale)} className={`px-3 py-1 rounded-md border ${selectedScale === scale ? "bg-blue-500 text-white" : "bg-white text-black"}`}>
+      <div className='grid grid-cols-7 gap-2 mb-6'>
+        {["C", "G", "D", "A", "E", "B", "F#"].map((scale) => (
+          <button key={scale} onClick={() => handleSelectScale(scale)} className={`px-3 py-1 rounded-md border ${selectedScale === scale ? "bg-gray-800 text-white" : "bg-white text-black"}`}>
             {scale} Major
           </button>
         ))}
-        {selectedScale && (
-          <button onClick={() => setSelectedScale(null)} className='px-3 py-1 rounded-md border bg-red-400 text-white'>
-            Clear
+        {/* Row 2 */}
+        <button onClick={() => setSelectedScale(null)} className='px-3 py-1 rounded-md border bg-red-400 text-white'>
+          Clear
+        </button>
+        {["F", "Bb", "Eb", "Ab", "Db", "Gb"].map((scale) => (
+          <button key={scale} onClick={() => handleSelectScale(scale)} className={`px-3 py-1 rounded-md border ${selectedScale === (enharmonicMap[scale] || scale) ? "bg-gray-800 text-white" : "bg-white text-black"}`}>
+            {scale} Major
           </button>
-        )}
+        ))}
       </div>
 
       {/* Piano */}
@@ -106,13 +126,10 @@ export default function Home() {
               <button
                 key={`${note}${octave}`}
                 onClick={() => handlePlayNote(note, octave)}
-                className={`relative w-16 h-64 border border-gray-400 rounded-md shadow-md active:bg-gray-300 flex items-end justify-center pb-2 ${
-                  selectedScale && majorScales[selectedScale]?.includes(note)
-                    ? selectedScale === note
-                      ? "bg-red-400" // Root note
-                      : "bg-blue-300" // Other scale notes
-                    : "bg-white"
-                }`}>
+                className='relative w-16 h-64 border border-gray-400 rounded-md shadow-md active:bg-gray-300 flex items-end justify-center pb-2'
+                style={{
+                  backgroundColor: getKeyColor(note) || "white",
+                }}>
                 <span className='text-xs text-gray-600'>
                   {note}
                   {octave}
@@ -120,8 +137,14 @@ export default function Home() {
               </button>
             ))
           )}
-          {/* Add final C7 key */}
-          <button key='C7' onClick={() => handlePlayNote("C", 7)} className={`relative w-16 h-64 border border-gray-400 rounded-md shadow-md active:bg-gray-300 flex items-end justify-center pb-2 ${selectedScale && majorScales[selectedScale]?.includes("C") ? (selectedScale === "C" ? "bg-red-400" : "bg-blue-300") : "bg-white"}`}>
+          {/* Final C7 */}
+          <button
+            key='C7'
+            onClick={() => handlePlayNote("C", 7)}
+            className='relative w-16 h-64 border border-gray-400 rounded-md shadow-md active:bg-gray-300 flex items-end justify-center pb-2'
+            style={{
+              backgroundColor: getKeyColor("C") || "white",
+            }}>
             <span className='text-xs text-gray-600'>C7</span>
           </button>
         </div>
@@ -139,8 +162,12 @@ export default function Home() {
                   <div className='flex justify-end'>
                     <button
                       onClick={() => handlePlayNote(blackKey.note, octave)}
-                      className={`pointer-events-auto w-10 h-40 rounded-b-md shadow-md -mb-0.5 active:bg-gray-800 flex items-end justify-center pb-1 ${selectedScale && majorScales[selectedScale]?.includes(blackKey.note) ? (selectedScale === blackKey.note ? "bg-red-500" : "bg-blue-500") : "bg-black"}`}
-                      style={{ marginRight: "-0.5rem", zIndex: 10 }}>
+                      className='pointer-events-auto w-10 h-40 rounded-b-md shadow-md -mb-0.5 active:bg-gray-800 flex items-end justify-center pb-1'
+                      style={{
+                        backgroundColor: getKeyColor(blackKey.note) || "black",
+                        marginRight: "-0.5rem",
+                        zIndex: 10,
+                      }}>
                       <span className='text-[10px] text-white'>
                         {blackKey.note}
                         {octave}
@@ -151,12 +178,12 @@ export default function Home() {
               );
             })
           )}
-          {/* No black key after C7 — just a spacer */}
+          {/* Spacer after C7 */}
           <div className='relative w-16'></div>
         </div>
       </div>
 
-      {/* Played note display */}
+      {/* Played note */}
       {playedNote && (
         <div className='mt-6 text-lg'>
           Played: <span className='font-semibold'>{playedNote}</span>
