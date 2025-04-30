@@ -164,6 +164,7 @@ export default function Home() {
 
   const handleSelectScale = (note: string) => {
     const mappedNote = enharmonicMap[note] || note;
+    setSelectedChordRoot(null);
     setSelectedScale(mappedNote);
   };
 
@@ -174,9 +175,11 @@ export default function Home() {
       if (prev === "Harmonic Minor") return "Melodic Minor";
       return "Major";
     });
+    setSelectedChordRoot(null);
   };
 
   const cycleChordType = () => {
+    setSelectedScale(null);
     setChordType((prev) => (prev === "Major" ? "Minor" : "Major"));
   };
 
@@ -191,6 +194,11 @@ export default function Home() {
     const fifth = chromatic[(index + 7) % 12];
 
     return type === "Major" ? [root, majorThird, fifth] : [root, minorThird, fifth];
+  };
+
+  const handleSelectChord = (note: string) => {
+    setSelectedChordRoot(note);
+    setSelectedScale(null); // 🛠 Clear scale selection
   };
 
   return (
@@ -243,7 +251,7 @@ export default function Home() {
         </div>
 
         {/* Learn Chords */}
-        <div>
+        {/* <div>
           <div className='grid grid-cols-7 gap-2 mb-6'>
             {["C", "G", "D", "A", "E", "B", "F#"].map((chordRoot) => (
               <button key={chordRoot} onClick={() => setSelectedChordRoot(chordRoot)} className={`px-3 py-1 rounded-md border ${selectedChordRoot === chordRoot ? "bg-gray-800 text-white" : "bg-white text-black"}`}>
@@ -255,6 +263,23 @@ export default function Home() {
             </button>
             {["F", "Bb", "Eb", "Ab", "Db", "Gb"].map((chordRoot) => (
               <button key={chordRoot} onClick={() => setSelectedChordRoot(chordRoot)} className={`px-3 py-1 rounded-md border ${selectedChordRoot === chordRoot ? "bg-gray-800 text-white" : "bg-white text-black"}`}>
+                {chordRoot}
+              </button>
+            ))}
+          </div>
+        </div> */}
+        <div>
+          <div className='grid grid-cols-7 gap-2 mb-6'>
+            {["C", "G", "D", "A", "E", "B", "F#"].map((chordRoot) => (
+              <button key={chordRoot} onClick={() => handleSelectChord(chordRoot)} className={`px-3 py-1 rounded-md border ${selectedChordRoot === chordRoot ? "bg-gray-800 text-white" : "bg-white text-black"}`}>
+                {chordRoot}
+              </button>
+            ))}
+            <button onClick={() => handleSelectChord(null)} className='px-3 py-1 rounded-md border bg-red-400 text-white'>
+              Clear
+            </button>
+            {["F", "Bb", "Eb", "Ab", "Db", "Gb"].map((chordRoot) => (
+              <button key={chordRoot} onClick={() => handleSelectChord(chordRoot)} className={`px-3 py-1 rounded-md border ${selectedChordRoot === chordRoot ? "bg-gray-800 text-white" : "bg-white text-black"}`}>
                 {chordRoot}
               </button>
             ))}
