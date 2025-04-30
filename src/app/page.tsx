@@ -102,16 +102,26 @@ export default function Home() {
     <div className='flex flex-col items-center justify-center min-h-screen p-4 bg-gray-100'>
       <h1 className='text-2xl font-bold mb-4'>Digital Keyboard (4 Octaves + C7)</h1>
 
-      {/* Grid for headers and buttons */}
       <div className='grid grid-cols-4 gap-4 w-full mb-6'>
         {/* Headers */}
         <div className='flex justify-center items-center text-xl font-semibold'>Learn Songs</div>
-        <div className='flex justify-center items-center text-xl font-semibold'>Learn Scales</div>
+        <div className='flex justify-center items-center text-xl font-semibold'>
+          Learn Scales <button className='px-3 py-1 mb-2 rounded-md border bg-white text-black'>Major</button>
+        </div>
         <div className='flex justify-center items-center text-xl font-semibold'>Learn Chords</div>
         <div className='flex justify-center items-center text-xl font-semibold'>Learn Chord Progressions</div>
 
-        {/* Buttons under Learn Scales */}
-        <div className='col-span-2'>
+        {/* Learn Songs Placeholder */}
+        <div className='flex flex-col items-center'>
+          {["Song 1", "Song 2", "Song 3"].map((song) => (
+            <button key={song} className='px-3 py-1 mb-2 rounded-md border bg-white text-black'>
+              {song}
+            </button>
+          ))}
+        </div>
+
+        {/* Learn Scales */}
+        <div>
           <div className='grid grid-cols-7 gap-2 mb-6'>
             {["C", "G", "D", "A", "E", "B", "F#"].map((scale) => (
               <button key={scale} onClick={() => handleSelectScale(scale)} className={`px-3 py-1 rounded-md border ${selectedScale === scale ? "bg-gray-800 text-white" : "bg-white text-black"}`}>
@@ -128,6 +138,24 @@ export default function Home() {
               </button>
             ))}
           </div>
+        </div>
+
+        {/* Learn Chords Placeholder */}
+        <div className='flex flex-col items-center'>
+          {["Chord 1", "Chord 2", "Chord 3"].map((chord) => (
+            <button key={chord} className='px-3 py-1 mb-2 rounded-md border bg-white text-black'>
+              {chord}
+            </button>
+          ))}
+        </div>
+
+        {/* Learn Chord Progressions Placeholder */}
+        <div className='flex flex-col items-center'>
+          {["Progression 1", "Progression 2", "Progression 3"].map((progression) => (
+            <button key={progression} className='px-3 py-1 mb-2 rounded-md border bg-white text-black'>
+              {progression}
+            </button>
+          ))}
         </div>
       </div>
 
