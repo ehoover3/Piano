@@ -43,6 +43,21 @@ const majorScales: Record<string, string[]> = {
   B: ["B", "C#", "D#", "E", "F#", "G#", "A#"],
 };
 
+const minorScales: Record<string, string[]> = {
+  C: ["C", "D", "D#", "F", "G", "G#", "A#"],
+  "C#": ["C#", "D#", "E", "F#", "G#", "A", "B"],
+  D: ["D", "E", "F", "G", "A", "A#", "C"],
+  "D#": ["D#", "F", "F#", "G#", "A#", "B", "C#"],
+  E: ["E", "F#", "G", "A", "B", "C", "D"],
+  F: ["F", "G", "G#", "A#", "C", "C#", "D#"],
+  "F#": ["F#", "G#", "A", "B", "C#", "D", "E"],
+  G: ["G", "A", "A#", "C", "D", "D#", "F"],
+  "G#": ["G#", "A#", "B", "C#", "D#", "E", "F#"],
+  A: ["A", "B", "C", "D", "E", "F", "G"],
+  "A#": ["A#", "C", "C#", "D#", "F", "F#", "G#"],
+  B: ["B", "C#", "D", "E", "F#", "G", "A"],
+};
+
 const enharmonicMap: Record<string, string> = {
   Bb: "A#",
   Eb: "D#",
@@ -62,6 +77,7 @@ const getFrequency = (note: string, octave: number) => {
 export default function Home() {
   const [playedNote, setPlayedNote] = useState<string | null>(null);
   const [selectedScale, setSelectedScale] = useState<string | null>(null);
+  const [scaleType, setScaleType] = useState<"Major" | "Minor">("Major");
 
   const playSound = (note: string, octave: number) => {
     const audioContext = new (window.AudioContext || (window as any).webkitAudioContext)();
@@ -84,11 +100,14 @@ export default function Home() {
   };
 
   const isBlackNote = (note: string) => note.includes("#");
+
   const getKeyColor = (note: string) => {
     if (!selectedScale) return "";
+    const scaleNotes = scaleType === "Major" ? majorScales[selectedScale] : minorScales[selectedScale];
+    if (!scaleNotes) return "";
     if (note === selectedScale) return "#248232"; // Green for root
-    if (majorScales[selectedScale]?.includes(note)) {
-      return isBlackNote(note) ? "#339BFF" : "#007BFF"; // Lighter blue for black keys
+    if (scaleNotes.includes(note)) {
+      return isBlackNote(note) ? "#339BFF" : "#007BFF";
     }
     return "";
   };
@@ -106,7 +125,10 @@ export default function Home() {
         {/* Headers */}
         <div className='flex justify-center items-center text-xl font-semibold'>Learn Songs</div>
         <div className='flex justify-center items-center text-xl font-semibold'>
-          Learn Scales <button className='px-3 py-1 mb-2 rounded-md border bg-white text-black'>Major</button>
+          Learn Scales{" "}
+          <button onClick={() => setScaleType((prev) => (prev === "Major" ? "Minor" : "Major"))} className='px-3 py-1 mb-2 rounded-md border bg-white text-black'>
+            {scaleType}
+          </button>
         </div>
         <div className='flex justify-center items-center text-xl font-semibold'>Learn Chords</div>
         <div className='flex justify-center items-center text-xl font-semibold'>Learn Chord Progressions</div>
