@@ -108,7 +108,7 @@ export default function Home() {
   const [playedNote, setPlayedNote] = useState<string | null>(null);
   const [selectedScale, setSelectedScale] = useState<string | null>(null);
   const [scaleType, setScaleType] = useState<"Major" | "Natural Minor" | "Harmonic Minor" | "Melodic Minor">("Major");
-  const [chordType, setChordType] = useState<"Major" | "Minor">("Major");
+  const [chordType, setChordType] = useState<"Major" | "Minor" | "Diminished" | "Augmented" | "Sus2" | "Sus4" | "Major Seventh" | "Minor Seventh" | "Dominant Seventh" | "Diminished Seventh" | "Half-Diminished Seventh" | "Minor-Major Seventh" | "Augmented Seventh" | "Augmented Major Seventh">("Major");
   const [selectedChordRoot, setSelectedChordRoot] = useState<string | null>(null);
 
   const playSound = (note: string, octave: number) => {
@@ -180,20 +180,61 @@ export default function Home() {
 
   const cycleChordType = () => {
     setSelectedScale(null);
-    setChordType((prev) => (prev === "Major" ? "Minor" : "Major"));
+    setChordType((prev) => {
+      const chordTypes = ["Major", "Minor", "Diminished", "Augmented", "Sus2", "Sus4", "Major Seventh", "Minor Seventh", "Dominant Seventh", "Diminished Seventh", "Half-Diminished Seventh", "Minor-Major Seventh", "Augmented Seventh", "Augmented Major Seventh"] as const;
+      const currentIndex = chordTypes.indexOf(prev);
+      const nextIndex = (currentIndex + 1) % chordTypes.length;
+      return chordTypes[nextIndex];
+    });
   };
 
-  const getChordNotes = (root: string, type: "Major" | "Minor") => {
+  const getChordNotes = (root: string, type: "Major" | "Minor" | "Diminished" | "Augmented" | "Sus2" | "Sus4" | "Major Seventh" | "Minor Seventh" | "Dominant Seventh" | "Diminished Seventh" | "Half-Diminished Seventh" | "Minor-Major Seventh" | "Augmented Seventh" | "Augmented Major Seventh") => {
     const chromatic = ["C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"];
     const index = chromatic.indexOf(root);
-
     if (index === -1) return [];
-
     const majorThird = chromatic[(index + 4) % 12];
     const minorThird = chromatic[(index + 3) % 12];
-    const fifth = chromatic[(index + 7) % 12];
+    const perfectFifth = chromatic[(index + 7) % 12];
+    const diminishedFifth = chromatic[(index + 6) % 12];
+    const augmentedFifth = chromatic[(index + 8) % 12];
+    const majorSecond = chromatic[(index + 2) % 12];
+    const perfectFourth = chromatic[(index + 5) % 12];
+    const majorSeventh = chromatic[(index + 11) % 12];
+    const minorSeventh = chromatic[(index + 10) % 12];
+    const diminishedSeventh = chromatic[(index + 9) % 12]; // technically double-flatted 7th
 
-    return type === "Major" ? [root, majorThird, fifth] : [root, minorThird, fifth];
+    switch (type) {
+      case "Major":
+        return [root, majorThird, perfectFifth];
+      case "Minor":
+        return [root, minorThird, perfectFifth];
+      case "Diminished":
+        return [root, minorThird, diminishedFifth];
+      case "Augmented":
+        return [root, majorThird, augmentedFifth];
+      case "Sus2":
+        return [root, majorSecond, perfectFifth];
+      case "Sus4":
+        return [root, perfectFourth, perfectFifth];
+      case "Major Seventh":
+        return [root, majorThird, perfectFifth, majorSeventh];
+      case "Minor Seventh":
+        return [root, minorThird, perfectFifth, minorSeventh];
+      case "Dominant Seventh":
+        return [root, majorThird, perfectFifth, minorSeventh];
+      case "Diminished Seventh":
+        return [root, minorThird, diminishedFifth, diminishedSeventh];
+      case "Half-Diminished Seventh":
+        return [root, minorThird, diminishedFifth, minorSeventh];
+      case "Minor-Major Seventh":
+        return [root, minorThird, perfectFifth, majorSeventh];
+      case "Augmented Seventh":
+        return [root, majorThird, augmentedFifth, minorSeventh];
+      case "Augmented Major Seventh":
+        return [root, majorThird, augmentedFifth, majorSeventh];
+      default:
+        return [];
+    }
   };
 
   const handleSelectChord = (note: string | null) => {
