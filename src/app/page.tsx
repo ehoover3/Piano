@@ -244,7 +244,9 @@ export default function Home() {
 
   return (
     <div className='flex flex-col items-center justify-center min-h-screen p-4 bg-gray-100'>
-      <h1 className='text-2xl font-bold mb-4'>Digital Keyboard (4 Octaves + C7)</h1>
+      <h1 className='text-2xl mr-4 mb-4'>
+        <span className='font-bold'>LightUp Piano:</span> Follow the Lights. Learn to Play.
+      </h1>
 
       <div className='grid grid-cols-4 gap-4 w-full mb-6'>
         <div className='flex justify-center items-center text-xl font-semibold'>Learn Songs</div>
