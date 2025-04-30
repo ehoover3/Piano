@@ -83,10 +83,13 @@ export default function Home() {
     playSound(note, octave);
   };
 
+  const isBlackNote = (note: string) => note.includes("#");
   const getKeyColor = (note: string) => {
     if (!selectedScale) return "";
-    if (selectedScale === note) return "#248232"; // Root note green
-    if (majorScales[selectedScale]?.includes(note)) return "#258EA6"; // Other scale notes teal
+    if (note === selectedScale) return "#248232"; // Green for root
+    if (majorScales[selectedScale]?.includes(note)) {
+      return isBlackNote(note) ? "#339BFF" : "#007BFF"; // Lighter blue for black keys
+    }
     return "";
   };
 
@@ -99,22 +102,33 @@ export default function Home() {
     <div className='flex flex-col items-center justify-center min-h-screen p-4 bg-gray-100'>
       <h1 className='text-2xl font-bold mb-4'>Digital Keyboard (4 Octaves + C7)</h1>
 
-      {/* Scale selection buttons */}
-      <div className='grid grid-cols-7 gap-2 mb-6'>
-        {["C", "G", "D", "A", "E", "B", "F#"].map((scale) => (
-          <button key={scale} onClick={() => handleSelectScale(scale)} className={`px-3 py-1 rounded-md border ${selectedScale === scale ? "bg-gray-800 text-white" : "bg-white text-black"}`}>
-            {scale} Major
-          </button>
-        ))}
-        {/* Row 2 */}
-        <button onClick={() => setSelectedScale(null)} className='px-3 py-1 rounded-md border bg-red-400 text-white'>
-          Clear
-        </button>
-        {["F", "Bb", "Eb", "Ab", "Db", "Gb"].map((scale) => (
-          <button key={scale} onClick={() => handleSelectScale(scale)} className={`px-3 py-1 rounded-md border ${selectedScale === (enharmonicMap[scale] || scale) ? "bg-gray-800 text-white" : "bg-white text-black"}`}>
-            {scale} Major
-          </button>
-        ))}
+      {/* Grid for headers and buttons */}
+      <div className='grid grid-cols-4 gap-4 w-full mb-6'>
+        {/* Headers */}
+        <div className='flex justify-center items-center text-xl font-semibold'>Learn Songs</div>
+        <div className='flex justify-center items-center text-xl font-semibold'>Learn Scales</div>
+        <div className='flex justify-center items-center text-xl font-semibold'>Learn Chords</div>
+        <div className='flex justify-center items-center text-xl font-semibold'>Learn Chord Progressions</div>
+
+        {/* Buttons under Learn Scales */}
+        <div className='col-span-2'>
+          <div className='grid grid-cols-7 gap-2 mb-6'>
+            {["C", "G", "D", "A", "E", "B", "F#"].map((scale) => (
+              <button key={scale} onClick={() => handleSelectScale(scale)} className={`px-3 py-1 rounded-md border ${selectedScale === scale ? "bg-gray-800 text-white" : "bg-white text-black"}`}>
+                {scale}
+              </button>
+            ))}
+            {/* Row 2 */}
+            <button onClick={() => setSelectedScale(null)} className='px-3 py-1 rounded-md border bg-red-400 text-white'>
+              Clear
+            </button>
+            {["F", "Bb", "Eb", "Ab", "Db", "Gb"].map((scale) => (
+              <button key={scale} onClick={() => handleSelectScale(scale)} className={`px-3 py-1 rounded-md border ${selectedScale === (enharmonicMap[scale] || scale) ? "bg-gray-800 text-white" : "bg-white text-black"}`}>
+                {scale}
+              </button>
+            ))}
+          </div>
+        </div>
       </div>
 
       {/* Piano */}
