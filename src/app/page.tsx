@@ -196,7 +196,7 @@ export default function Home() {
     return type === "Major" ? [root, majorThird, fifth] : [root, minorThird, fifth];
   };
 
-  const handleSelectChord = (note: string) => {
+  const handleSelectChord = (note: string | null) => {
     setSelectedChordRoot(note);
     setSelectedScale(null); // 🛠 Clear scale selection
   };
@@ -251,23 +251,6 @@ export default function Home() {
         </div>
 
         {/* Learn Chords */}
-        {/* <div>
-          <div className='grid grid-cols-7 gap-2 mb-6'>
-            {["C", "G", "D", "A", "E", "B", "F#"].map((chordRoot) => (
-              <button key={chordRoot} onClick={() => setSelectedChordRoot(chordRoot)} className={`px-3 py-1 rounded-md border ${selectedChordRoot === chordRoot ? "bg-gray-800 text-white" : "bg-white text-black"}`}>
-                {chordRoot}
-              </button>
-            ))}
-            <button onClick={() => setSelectedChordRoot(null)} className='px-3 py-1 rounded-md border bg-red-400 text-white'>
-              Clear
-            </button>
-            {["F", "Bb", "Eb", "Ab", "Db", "Gb"].map((chordRoot) => (
-              <button key={chordRoot} onClick={() => setSelectedChordRoot(chordRoot)} className={`px-3 py-1 rounded-md border ${selectedChordRoot === chordRoot ? "bg-gray-800 text-white" : "bg-white text-black"}`}>
-                {chordRoot}
-              </button>
-            ))}
-          </div>
-        </div> */}
         <div>
           <div className='grid grid-cols-7 gap-2 mb-6'>
             {["C", "G", "D", "A", "E", "B", "F#"].map((chordRoot) => (
