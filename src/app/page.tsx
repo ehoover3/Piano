@@ -108,6 +108,8 @@ export default function Home() {
   const [playedNote, setPlayedNote] = useState<string | null>(null);
   const [selectedScale, setSelectedScale] = useState<string | null>(null);
   const [scaleType, setScaleType] = useState<"Major" | "Natural Minor" | "Harmonic Minor" | "Melodic Minor">("Major");
+  const [chordType, setChordType] = useState<"Major" | "Minor">("Major");
+  const [selectedChordRoot, setSelectedChordRoot] = useState<string | null>(null);
 
   const playSound = (note: string, octave: number) => {
     const audioContext = new (window.AudioContext || (window as any).webkitAudioContext)();
@@ -132,23 +134,30 @@ export default function Home() {
   const isBlackNote = (note: string) => note.includes("#");
 
   const getKeyColor = (note: string) => {
-    if (!selectedScale) return "";
-    let scaleNotes: string[] | undefined;
-    if (scaleType === "Major") {
-      scaleNotes = majorScales[selectedScale];
-    } else if (scaleType === "Natural Minor") {
-      scaleNotes = naturalMinorScales[selectedScale];
-    } else if (scaleType === "Harmonic Minor") {
-      scaleNotes = harmonicMinorScales[selectedScale];
-    } else if (scaleType === "Melodic Minor") {
-      scaleNotes = melodicMinorScales[selectedScale];
+    if (selectedChordRoot) {
+      const chordNotes = getChordNotes(selectedChordRoot, chordType);
+      if (note === selectedChordRoot) return "#248232"; // Green for root
+      if (chordNotes.includes(note)) return "#007BFF"; // Blue for chord tones
+      return "";
     }
+    if (selectedScale) {
+      let scaleNotes: string[] | undefined;
+      if (scaleType === "Major") {
+        scaleNotes = majorScales[selectedScale];
+      } else if (scaleType === "Natural Minor") {
+        scaleNotes = naturalMinorScales[selectedScale];
+      } else if (scaleType === "Harmonic Minor") {
+        scaleNotes = harmonicMinorScales[selectedScale];
+      } else if (scaleType === "Melodic Minor") {
+        scaleNotes = melodicMinorScales[selectedScale];
+      }
 
-    if (!scaleNotes) return "";
+      if (!scaleNotes) return "";
 
-    if (note === selectedScale) return "#248232"; // Green for root
-    if (scaleNotes.includes(note)) {
-      return isBlackNote(note) ? "#339BFF" : "#007BFF";
+      if (note === selectedScale) return "#248232"; // Green for root
+      if (scaleNotes.includes(note)) {
+        return isBlackNote(note) ? "#339BFF" : "#007BFF";
+      }
     }
     return "";
   };
@@ -167,6 +176,23 @@ export default function Home() {
     });
   };
 
+  const cycleChordType = () => {
+    setChordType((prev) => (prev === "Major" ? "Minor" : "Major"));
+  };
+
+  const getChordNotes = (root: string, type: "Major" | "Minor") => {
+    const chromatic = ["C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"];
+    const index = chromatic.indexOf(root);
+
+    if (index === -1) return [];
+
+    const majorThird = chromatic[(index + 4) % 12];
+    const minorThird = chromatic[(index + 3) % 12];
+    const fifth = chromatic[(index + 7) % 12];
+
+    return type === "Major" ? [root, majorThird, fifth] : [root, minorThird, fifth];
+  };
+
   return (
     <div className='flex flex-col items-center justify-center min-h-screen p-4 bg-gray-100'>
       <h1 className='text-2xl font-bold mb-4'>Digital Keyboard (4 Octaves + C7)</h1>
@@ -181,7 +207,12 @@ export default function Home() {
             </button>
           </div>
         </div>
-        <div className='flex justify-center items-center text-xl font-semibold'>Learn Chords</div>
+        <div className='flex justify-center items-center text-xl font-semibold'>
+          <span>Learn Chords</span>
+          <button onClick={cycleChordType} className='px-3 py-1 rounded-md border bg-white text-black ml-2'>
+            {chordType}
+          </button>
+        </div>
         <div className='flex justify-center items-center text-xl font-semibold'>Learn Chord Progressions</div>
 
         <div className='flex flex-col items-center'>
@@ -192,6 +223,7 @@ export default function Home() {
           ))}
         </div>
 
+        {/* Learn Scales */}
         <div>
           <div className='grid grid-cols-7 gap-2 mb-6'>
             {["C", "G", "D", "A", "E", "B", "F#"].map((scale) => (
@@ -210,12 +242,23 @@ export default function Home() {
           </div>
         </div>
 
-        <div className='flex flex-col items-center'>
-          {["Chord 1", "Chord 2", "Chord 3"].map((chord) => (
-            <button key={chord} className='px-3 py-1 mb-2 rounded-md border bg-white text-black'>
-              {chord}
+        {/* Learn Chords */}
+        <div>
+          <div className='grid grid-cols-7 gap-2 mb-6'>
+            {["C", "G", "D", "A", "E", "B", "F#"].map((chordRoot) => (
+              <button key={chordRoot} onClick={() => setSelectedChordRoot(chordRoot)} className={`px-3 py-1 rounded-md border ${selectedChordRoot === chordRoot ? "bg-gray-800 text-white" : "bg-white text-black"}`}>
+                {chordRoot}
+              </button>
+            ))}
+            <button onClick={() => setSelectedChordRoot(null)} className='px-3 py-1 rounded-md border bg-red-400 text-white'>
+              Clear
             </button>
-          ))}
+            {["F", "Bb", "Eb", "Ab", "Db", "Gb"].map((chordRoot) => (
+              <button key={chordRoot} onClick={() => setSelectedChordRoot(chordRoot)} className={`px-3 py-1 rounded-md border ${selectedChordRoot === chordRoot ? "bg-gray-800 text-white" : "bg-white text-black"}`}>
+                {chordRoot}
+              </button>
+            ))}
+          </div>
         </div>
 
         <div className='flex flex-col items-center'>
