@@ -1,6 +1,11 @@
 "use client";
 
 import { useState } from "react";
+import { majorScales, naturalMinorScales, harmonicMinorScales, melodicMinorScales, enharmonicMap } from "./scales";
+import SongsButtons from "./components/SongsButtons";
+import ScalesButtons from "./components/ScalesButtons";
+import ChordsButtons from "./components/ChordsButtons";
+import ChordProgressionsButtons from "./components/ChordProgressionsButtons";
 
 const octaves = [3, 4, 5, 6];
 
@@ -26,74 +31,6 @@ const baseFrequencies: Record<string, number> = {
   A: 440.0,
   "A#": 466.16,
   B: 493.88,
-};
-
-const majorScales: Record<string, string[]> = {
-  C: ["C", "D", "E", "F", "G", "A", "B"],
-  "C#": ["C#", "D#", "F", "F#", "G#", "A#", "C"],
-  D: ["D", "E", "F#", "G", "A", "B", "C#"],
-  "D#": ["D#", "F", "G", "G#", "A#", "C", "D"],
-  E: ["E", "F#", "G#", "A", "B", "C#", "D#"],
-  F: ["F", "G", "A", "A#", "C", "D", "E"],
-  "F#": ["F#", "G#", "A#", "B", "C#", "D#", "F"],
-  G: ["G", "A", "B", "C", "D", "E", "F#"],
-  "G#": ["G#", "A#", "C", "C#", "D#", "F", "G"],
-  A: ["A", "B", "C#", "D", "E", "F#", "G#"],
-  "A#": ["A#", "C", "D", "D#", "F", "G", "A"],
-  B: ["B", "C#", "D#", "E", "F#", "G#", "A#"],
-};
-
-const naturalMinorScales: Record<string, string[]> = {
-  C: ["C", "D", "D#", "F", "G", "G#", "A#"],
-  "C#": ["C#", "D#", "E", "F#", "G#", "A", "B"],
-  D: ["D", "E", "F", "G", "A", "A#", "C"],
-  "D#": ["D#", "F", "F#", "G#", "A#", "B", "C#"],
-  E: ["E", "F#", "G", "A", "B", "C", "D"],
-  F: ["F", "G", "G#", "A#", "C", "C#", "D#"],
-  "F#": ["F#", "G#", "A", "B", "C#", "D", "E"],
-  G: ["G", "A", "A#", "C", "D", "D#", "F"],
-  "G#": ["G#", "A#", "B", "C#", "D#", "E", "F#"],
-  A: ["A", "B", "C", "D", "E", "F", "G"],
-  "A#": ["A#", "C", "C#", "D#", "F", "F#", "G#"],
-  B: ["B", "C#", "D", "E", "F#", "G", "A"],
-};
-
-const harmonicMinorScales: Record<string, string[]> = {
-  C: ["C", "D", "D#", "F", "G", "G#", "B"],
-  "C#": ["C#", "D#", "E", "F#", "G#", "A", "C"],
-  D: ["D", "E", "F", "G", "A", "A#", "C#"],
-  "D#": ["D#", "F", "F#", "G#", "A#", "B", "D"],
-  E: ["E", "F#", "G", "A", "B", "C", "D#"],
-  F: ["F", "G", "G#", "A#", "C", "C#", "E"],
-  "F#": ["F#", "G#", "A", "B", "C#", "D", "F"],
-  G: ["G", "A", "A#", "C", "D", "D#", "F#"],
-  "G#": ["G#", "A#", "B", "C#", "D#", "E", "G"],
-  A: ["A", "B", "C", "D", "E", "F", "G#"],
-  "A#": ["A#", "C", "C#", "D#", "F", "F#", "A"],
-  B: ["B", "C#", "D", "E", "F#", "G", "A#"],
-};
-
-const melodicMinorScales: Record<string, string[]> = {
-  C: ["C", "D", "D#", "F", "G", "A", "B"],
-  "C#": ["C#", "D#", "E", "F#", "G#", "A#", "C"],
-  D: ["D", "E", "F", "G", "A", "B", "C#"],
-  "D#": ["D#", "F", "F#", "G#", "A#", "C", "D"],
-  E: ["E", "F#", "G", "A", "B", "C#", "D#"],
-  F: ["F", "G", "G#", "A#", "C", "D", "E"],
-  "F#": ["F#", "G#", "A", "B", "C#", "D#", "F"],
-  G: ["G", "A", "A#", "C", "D", "E", "F#"],
-  "G#": ["G#", "A#", "B", "C#", "D#", "F", "G"],
-  A: ["A", "B", "C", "D", "E", "F#", "G#"],
-  "A#": ["A#", "C", "C#", "D#", "F", "G", "A"],
-  B: ["B", "C#", "D", "E", "F#", "G#", "A#"],
-};
-
-const enharmonicMap: Record<string, string> = {
-  Bb: "A#",
-  Eb: "D#",
-  Ab: "G#",
-  Db: "C#",
-  Gb: "F#",
 };
 
 const getFrequency = (note: string, octave: number) => {
@@ -265,60 +202,10 @@ export default function Home() {
           </button>
         </div>
         <div className='flex justify-center items-center text-xl font-semibold'>Learn Chord Progressions</div>
-
-        <div className='flex flex-col items-center'>
-          {["Song 1", "Song 2", "Song 3"].map((song) => (
-            <button key={song} className='px-3 py-1 mb-2 rounded-md border bg-white text-black'>
-              {song}
-            </button>
-          ))}
-        </div>
-
-        {/* Learn Scales */}
-        <div>
-          <div className='grid grid-cols-7 gap-2 mb-6'>
-            {["C", "G", "D", "A", "E", "B", "F#"].map((scale) => (
-              <button key={scale} onClick={() => handleSelectScale(scale)} className={`px-3 py-1 rounded-md border ${selectedScale === scale ? "bg-gray-800 text-white" : "bg-white text-black"}`}>
-                {scale}
-              </button>
-            ))}
-            <button onClick={() => setSelectedScale(null)} className='px-3 py-1 rounded-md border bg-red-400 text-white'>
-              Clear
-            </button>
-            {["F", "Bb", "Eb", "Ab", "Db", "Gb"].map((scale) => (
-              <button key={scale} onClick={() => handleSelectScale(scale)} className={`px-3 py-1 rounded-md border ${selectedScale === (enharmonicMap[scale] || scale) ? "bg-gray-800 text-white" : "bg-white text-black"}`}>
-                {scale}
-              </button>
-            ))}
-          </div>
-        </div>
-
-        {/* Learn Chords */}
-        <div>
-          <div className='grid grid-cols-7 gap-2 mb-6'>
-            {["C", "G", "D", "A", "E", "B", "F#"].map((chordRoot) => (
-              <button key={chordRoot} onClick={() => handleSelectChord(chordRoot)} className={`px-3 py-1 rounded-md border ${selectedChordRoot === chordRoot ? "bg-gray-800 text-white" : "bg-white text-black"}`}>
-                {chordRoot}
-              </button>
-            ))}
-            <button onClick={() => handleSelectChord(null)} className='px-3 py-1 rounded-md border bg-red-400 text-white'>
-              Clear
-            </button>
-            {["F", "Bb", "Eb", "Ab", "Db", "Gb"].map((chordRoot) => (
-              <button key={chordRoot} onClick={() => handleSelectChord(chordRoot)} className={`px-3 py-1 rounded-md border ${selectedChordRoot === chordRoot ? "bg-gray-800 text-white" : "bg-white text-black"}`}>
-                {chordRoot}
-              </button>
-            ))}
-          </div>
-        </div>
-
-        <div className='flex flex-col items-center'>
-          {["Progression 1", "Progression 2", "Progression 3"].map((progression) => (
-            <button key={progression} className='px-3 py-1 mb-2 rounded-md border bg-white text-black'>
-              {progression}
-            </button>
-          ))}
-        </div>
+        <SongsButtons />
+        <ScalesButtons selectedScale={selectedScale} handleSelectScale={handleSelectScale} clearScale={() => setSelectedScale(null)} />
+        <ChordsButtons selectedChordRoot={selectedChordRoot} handleSelectChord={handleSelectChord} />
+        <ChordProgressionsButtons />
       </div>
 
       <div className='relative'>
