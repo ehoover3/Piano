@@ -71,10 +71,13 @@ export default function Home() {
   const isBlackNote = (note: string) => note.includes("#");
 
   const getKeyColor = (note: string) => {
+    const normalizedNote = enharmonicMap[note] || note;
+    const normalizedChordRoot = selectedChordRoot ? enharmonicMap[selectedChordRoot] || selectedChordRoot : null;
+
     if (selectedChordRoot) {
-      const chordNotes = getChordNotes(selectedChordRoot, chordType);
-      if (note === selectedChordRoot) return "#248232"; // Green for root
-      if (chordNotes.includes(note)) return "#007BFF"; // Blue for chord tones
+      const chordNotes = getChordNotes(selectedChordRoot, chordType).map((n) => enharmonicMap[n] || n);
+      if (normalizedNote === normalizedChordRoot) return "#248232"; // Green for root
+      if (chordNotes.includes(normalizedNote)) return "#007BFF"; // Blue for chord tones
       return "";
     }
     if (selectedScale) {
@@ -127,8 +130,10 @@ export default function Home() {
 
   const getChordNotes = (root: string, type: "Major" | "Minor" | "Diminished" | "Augmented" | "Sus2" | "Sus4" | "Major Seventh" | "Minor Seventh" | "Dominant Seventh" | "Diminished Seventh" | "Half-Diminished Seventh" | "Minor-Major Seventh" | "Augmented Seventh" | "Augmented Major Seventh") => {
     const chromatic = ["C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"];
-    const index = chromatic.indexOf(root);
+    const normalizedRoot = enharmonicMap[root] || root; // 👈 Normalize flat to sharp
+    const index = chromatic.indexOf(normalizedRoot);
     if (index === -1) return [];
+
     const majorThird = chromatic[(index + 4) % 12];
     const minorThird = chromatic[(index + 3) % 12];
     const perfectFifth = chromatic[(index + 7) % 12];
