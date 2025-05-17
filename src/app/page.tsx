@@ -2,10 +2,8 @@
 
 import { useState } from "react";
 import { majorScales, naturalMinorScales, harmonicMinorScales, melodicMinorScales, enharmonicMap } from "./scales";
-import SongsButtons from "./components/SongsButtons";
-import ScalesButtons from "./components/ScalesButtons";
-import ChordsButtons from "./components/ChordsButtons";
-import ChordProgressionsButtons from "./components/ChordProgressionsButtons";
+import Scales from "./components/Scales";
+import Chords from "./components/Chords";
 
 const octaves = [3, 4, 5, 6];
 
@@ -186,31 +184,13 @@ export default function Home() {
 
   return (
     <div className='flex flex-col items-center justify-center min-h-screen p-4 bg-gray-100'>
-      <h1 className='text-2xl mr-4 mb-4'>
-        <span className='font-bold'>LightUp Piano:</span> Follow the Lights. Learn to Play.
-      </h1>
-
       <div className='grid grid-cols-4 gap-4 w-full mb-6'>
-        <div className='flex justify-center items-center text-xl font-semibold'>Learn Songs</div>
         <div className='flex flex-col items-center'>
-          <div className='flex items-center gap-2 mb-2'>
-            <span className='text-xl font-semibold'>Learn Scales</span>
-            <button onClick={cycleScaleType} className='px-3 py-1 rounded-md border bg-white text-black'>
-              {scaleType}
-            </button>
-          </div>
+          <div className='flex items-center gap-2 mb-2'></div>
         </div>
-        <div className='flex justify-center items-center text-xl font-semibold'>
-          <span>Learn Chords</span>
-          <button onClick={cycleChordType} className='px-3 py-1 rounded-md border bg-white text-black ml-2'>
-            {chordType}
-          </button>
-        </div>
-        <div className='flex justify-center items-center text-xl font-semibold'>Learn Chord Progressions</div>
-        <SongsButtons />
-        <ScalesButtons selectedScale={selectedScale} handleSelectScale={handleSelectScale} clearScale={() => setSelectedScale(null)} />
-        <ChordsButtons selectedChordRoot={selectedChordRoot} handleSelectChord={handleSelectChord} />
-        <ChordProgressionsButtons />
+        <div className='flex justify-center items-center text-xl font-semibold'></div>
+        <Scales selectedScale={selectedScale} scaleType={scaleType} cycleScaleType={cycleScaleType} handleSelectScale={handleSelectScale} clearScale={() => setSelectedScale(null)} />
+        <Chords selectedChordRoot={selectedChordRoot} handleSelectChord={handleSelectChord} chordType={chordType} cycleChordType={cycleChordType} />
       </div>
 
       <div className='relative'>

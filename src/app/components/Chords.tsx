@@ -1,17 +1,22 @@
-// components/ChordsButtons.js
 import React from "react";
 
-type ChordsButtonsProps = {
+type ChordsProps = {
   selectedChordRoot: string | null;
   handleSelectChord: (chordRoot: string | null) => void;
+  chordType: string;
+  cycleChordType: () => void;
 };
 
-const ChordsButtons: React.FC<ChordsButtonsProps> = ({ selectedChordRoot, handleSelectChord }) => {
+const Chords: React.FC<ChordsProps> = ({ selectedChordRoot, handleSelectChord, chordType, cycleChordType }) => {
   const firstSetChords = ["C", "G", "D", "A", "E", "B", "F#"];
   const secondSetChords = ["F", "Bb", "Eb", "Ab", "Db", "Gb"];
 
   return (
     <div>
+      <span>Learn Chords</span>
+      <button onClick={cycleChordType} className='px-3 py-1 rounded-md border bg-white text-black ml-2'>
+        {chordType}
+      </button>
       <div className='grid grid-cols-7 gap-2 mb-6'>
         {firstSetChords.map((chordRoot) => (
           <button key={chordRoot} onClick={() => handleSelectChord(chordRoot)} className={`px-3 py-1 rounded-md border ${selectedChordRoot === chordRoot ? "bg-gray-800 text-white" : "bg-white text-black"}`}>
@@ -31,4 +36,4 @@ const ChordsButtons: React.FC<ChordsButtonsProps> = ({ selectedChordRoot, handle
   );
 };
 
-export default ChordsButtons;
+export default Chords;
