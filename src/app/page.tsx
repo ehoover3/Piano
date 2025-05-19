@@ -2,13 +2,13 @@
 
 import { useState } from "react";
 import { majorScales, naturalMinorScales, harmonicMinorScales, melodicMinorScales, enharmonicMap } from "./scales";
+import { getFrequency } from "./utils/frequencies";
 import Scales from "./components/Scales";
 import Chords from "./components/Chords";
-import { getFrequency } from "./utils/frequencies";
 import Keyboard from "./components/Keyboard";
+import UIButtons from "./components/UIButtons";
 
 const octaves = [3, 4, 5, 6];
-
 const whiteNotesBase = ["C", "D", "E", "F", "G", "A", "B"];
 const blackNotesBase = [
   { note: "C#", position: 0 },
@@ -50,7 +50,6 @@ export default function Home() {
   const getKeyColor = (note: string) => {
     const normalizedNote = enharmonicMap[note] || note;
     const normalizedChordRoot = selectedChordRoot ? enharmonicMap[selectedChordRoot] || selectedChordRoot : null;
-
     if (selectedChordRoot) {
       const chordNotes = getChordNotes(selectedChordRoot, chordType).map((n) => enharmonicMap[n] || n);
       if (normalizedNote === normalizedChordRoot) return "#248232"; // Green for root
@@ -68,9 +67,7 @@ export default function Home() {
       } else if (scaleType === "Melodic Minor") {
         scaleNotes = melodicMinorScales[selectedScale];
       }
-
       if (!scaleNotes) return "";
-
       if (note === selectedScale) return "#248232"; // Green for root
       if (scaleNotes.includes(note)) {
         return isBlackNote(note) ? "#339BFF" : "#007BFF";
@@ -158,19 +155,12 @@ export default function Home() {
 
   const handleSelectChord = (note: string | null) => {
     setSelectedChordRoot(note);
-    setSelectedScale(null); // 🛠 Clear scale selection
+    setSelectedScale(null); // Clear scale selection
   };
 
   return (
     <div className='flex flex-col items-center justify-center min-h-screen p-4 bg-gray-100'>
-      <div className='grid grid-cols-4 gap-4 w-full mb-6'>
-        <div className='flex flex-col items-center'>
-          <div className='flex items-center gap-2 mb-2'></div>
-        </div>
-        <div className='flex justify-center items-center text-xl font-semibold'></div>
-        <Scales selectedScale={selectedScale} scaleType={scaleType} cycleScaleType={cycleScaleType} handleSelectScale={handleSelectScale} clearScale={() => setSelectedScale(null)} />
-        <Chords selectedChordRoot={selectedChordRoot} handleSelectChord={handleSelectChord} chordType={chordType} cycleChordType={cycleChordType} />
-      </div>
+      <UIButtons selectedScale={selectedScale} selectedChordRoot={selectedChordRoot} scaleType={scaleType} chordType={chordType} cycleScaleType={cycleScaleType} cycleChordType={cycleChordType} handleSelectScale={handleSelectScale} handleSelectChord={handleSelectChord} clearScale={() => setSelectedScale(null)} />
       <Keyboard octaves={octaves} whiteNotesBase={whiteNotesBase} blackNotesBase={blackNotesBase} handlePlayNote={handlePlayNote} getKeyColor={getKeyColor} />
       {playedNote && (
         <div className='mt-6 text-lg'>
