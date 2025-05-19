@@ -3,8 +3,6 @@
 import { useState } from "react";
 import { majorScales, naturalMinorScales, harmonicMinorScales, melodicMinorScales, enharmonicMap } from "./scales";
 import { getFrequency } from "./utils/frequencies";
-import Scales from "./components/Scales";
-import Chords from "./components/Chords";
 import Keyboard from "./components/Keyboard";
 import UIButtons from "./components/UIButtons";
 

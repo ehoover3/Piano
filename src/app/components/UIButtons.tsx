@@ -27,7 +27,7 @@ const UIButtons: React.FC<UIButtonsProps> = ({ selectedScale, selectedChordRoot,
       {/* Scale Selector */}
       <div>
         <span className='text-xl font-semibold'>Learn Scales</span>
-        <button onClick={cycleScaleType} className='ml-2 px-3 py-1 rounded-md border bg-white text-black'>
+        <button onClick={cycleScaleType} className={`ml-2 px-3 py-1 rounded-md border text-white ${selectedScale ? "bg-blue-600" : "bg-gray-400"}`}>
           {scaleType}
         </button>
         <div className='grid grid-cols-7 gap-2 mb-6 mt-2'>
@@ -50,7 +50,7 @@ const UIButtons: React.FC<UIButtonsProps> = ({ selectedScale, selectedChordRoot,
       {/* Chord Selector */}
       <div>
         <span className='text-xl font-semibold'>Learn Chords</span>
-        <button onClick={cycleChordType} className='ml-2 px-3 py-1 rounded-md border bg-white text-black'>
+        <button onClick={cycleChordType} className={`ml-2 px-3 py-1 rounded-md border text-white ${selectedChordRoot ? "bg-green-600" : "bg-gray-400"}`}>
           {chordType}
         </button>
         <div className='grid grid-cols-7 gap-2 mb-6 mt-2'>
