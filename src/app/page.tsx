@@ -4,6 +4,7 @@ import { useState } from "react";
 import { majorScales, naturalMinorScales, harmonicMinorScales, melodicMinorScales, enharmonicMap } from "./scales";
 import Scales from "./components/Scales";
 import Chords from "./components/Chords";
+import { getFrequency } from "./utils/frequencies";
 
 const octaves = [3, 4, 5, 6];
 
@@ -15,29 +16,6 @@ const blackNotesBase = [
   { note: "G#", position: 4 },
   { note: "A#", position: 5 },
 ];
-
-const baseFrequencies: Record<string, number> = {
-  C: 261.63,
-  "C#": 277.18,
-  D: 293.66,
-  "D#": 311.13,
-  E: 329.63,
-  F: 349.23,
-  "F#": 369.99,
-  G: 392.0,
-  "G#": 415.3,
-  A: 440.0,
-  "A#": 466.16,
-  B: 493.88,
-};
-
-const getFrequency = (note: string, octave: number) => {
-  const baseOctave = 4;
-  const semitoneRatio = Math.pow(2, 1 / 12);
-  const baseFreq = baseFrequencies[note];
-  const distance = (octave - baseOctave) * 12;
-  return baseFreq * Math.pow(semitoneRatio, distance);
-};
 
 export default function Home() {
   const [playedNote, setPlayedNote] = useState<string | null>(null);
