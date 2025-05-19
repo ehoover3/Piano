@@ -1,13 +1,15 @@
-// components/Keyboard.tsx
 "use client";
 
-type KeyboardProps = {
+import React from "react";
+import { enharmonicMap } from "../scales";
+
+interface KeyboardProps {
   octaves: number[];
   whiteNotesBase: string[];
   blackNotesBase: { note: string; position: number }[];
   handlePlayNote: (note: string, octave: number) => void;
   getKeyColor: (note: string) => string;
-};
+}
 
 export default function Keyboard({ octaves, whiteNotesBase, blackNotesBase, handlePlayNote, getKeyColor }: KeyboardProps) {
   return (
