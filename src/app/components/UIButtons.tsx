@@ -18,9 +18,13 @@ type NoteSelectorProps = {
   isScale?: boolean;
 };
 
-const NoteSelector: React.FC<NoteSelectorProps> = ({ title, currentType, selectedNote, typeColor, sharpKeys, flatKeys, cycleType, handleSelect, isScale = false }) => {
+const NoteSelector: React.FC<NoteSelectorProps> = ({ title, currentType, selectedNote, typeColor, cycleType, handleSelect, isScale = false }) => {
+  const chromaticNotes = ["C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"];
+
   const renderButton = (note: string) => {
-    const isSelected = selectedNote === (isScale ? enharmonicMap[note] || note : note);
+    const displayNote = isScale ? enharmonicMap[note] || note : note;
+    const isSelected = selectedNote === displayNote;
+
     return (
       <button key={note} onClick={() => handleSelect(note)} className={`px-3 py-1 rounded-md border ${isSelected ? "bg-gray-800 text-white" : "bg-white text-black"}`}>
         {note}
@@ -31,15 +35,14 @@ const NoteSelector: React.FC<NoteSelectorProps> = ({ title, currentType, selecte
   return (
     <div>
       <span className='text-xl font-semibold'>{title}</span>
-      <button onClick={cycleType} className={`ml-2 px-3 py-1 rounded-md border text-white bg-${typeColor}-600`}>
+      <button onClick={cycleType} className={`ml-2 px-3 py-1 rounded-md border text-white ${typeColor ? `bg-${typeColor}-600` : "bg-gray-600"}`}>
         {currentType}
       </button>
-      <div className='grid grid-cols-7 gap-2 mb-6 mt-2'>
-        {sharpKeys.map(renderButton)}
+      <div className='mt-2 mb-6 flex flex-wrap gap-2 items-center'>
+        {chromaticNotes.map(renderButton)}
         <button onClick={() => handleSelect(null)} className='px-3 py-1 rounded-md border bg-red-400 text-white'>
           Clear
         </button>
-        {flatKeys.map(renderButton)}
       </div>
     </div>
   );
@@ -63,8 +66,27 @@ const UIButtons: React.FC<UIButtonsProps> = ({ selectedScale, selectedChordRoot,
 
   return (
     <div className='col-span-4 grid grid-cols-2 gap-4'>
-      <NoteSelector title='Scales' currentType={scaleType} selectedNote={selectedScale} typeColor={selectedScale ? "blue" : "gray"} sharpKeys={sharpKeys} flatKeys={flatKeys} cycleType={cycleScaleType} handleSelect={(note) => (note ? handleSelectScale(note) : clearScale())} isScale />
-      <NoteSelector title='Chords' currentType={chordType} selectedNote={selectedChordRoot} typeColor={selectedChordRoot ? "green" : "gray"} sharpKeys={sharpKeys} flatKeys={flatKeys} cycleType={cycleChordType} handleSelect={handleSelectChord} />
+      <NoteSelector
+        title='Scales'
+        currentType={scaleType}
+        selectedNote={selectedScale}
+        typeColor={selectedScale ? "blue" : "gray"}
+        sharpKeys={[]} // no longer needed
+        flatKeys={[]} // no longer needed
+        cycleType={cycleScaleType}
+        handleSelect={(note) => (note ? handleSelectScale(note) : clearScale())}
+        isScale
+      />
+      <NoteSelector
+        title='Chords'
+        currentType={chordType}
+        selectedNote={selectedChordRoot}
+        typeColor={selectedChordRoot ? "green" : "gray"}
+        sharpKeys={[]} // no longer needed
+        flatKeys={[]} // no longer needed
+        cycleType={cycleChordType}
+        handleSelect={handleSelectChord}
+      />
     </div>
   );
 };
