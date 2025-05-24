@@ -10,7 +10,6 @@ type UIButtonsProps = {
   selectedScale: string | null;
   selectedChordRoot: string | null;
   scaleType: ScaleType;
-  chordType: ChordType;
   setScaleType: (type: ScaleType) => void;
   setChordType: (type: ChordType) => void;
   handleSelectScale: (scale: string) => void;
@@ -18,7 +17,7 @@ type UIButtonsProps = {
   clearScale: () => void;
 };
 
-const UIButtons: React.FC<UIButtonsProps> = ({ selectedScale, selectedChordRoot, scaleType, chordType, setScaleType, setChordType, handleSelectScale, handleSelectChord, clearScale }) => {
+const UIButtons: React.FC<UIButtonsProps> = ({ selectedScale, selectedChordRoot, scaleType, setScaleType, setChordType, handleSelectScale, handleSelectChord, clearScale }) => {
   const chromaticNotes = ["C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"];
   const scaleTypes: ScaleType[] = ["Major", "Natural Minor", "Harmonic Minor", "Melodic Minor"];
   const chordTypes: ChordType[] = ["Major", "Minor", "Diminished", "Augmented", "Sus2", "Sus4", "Major Seventh", "Minor Seventh", "Dominant Seventh", "Diminished Seventh", "Half-Diminished Seventh", "Minor-Major Seventh", "Augmented Seventh", "Augmented Major Seventh"];
@@ -43,7 +42,7 @@ const UIButtons: React.FC<UIButtonsProps> = ({ selectedScale, selectedChordRoot,
   return (
     <div className='col-span-4 space-y-4'>
       <div className='flex flex-wrap gap-2 items-center'>
-        <div className='text-xl font-semibold'>1. Select a Note</div>
+        <div className='text-xl font-semibold'>1. Select Note</div>
         {chromaticNotes.map((note) => {
           const displayNote = selectionMode === "scale" ? enharmonicMap[note] || note : note;
           const isSelected = selectionMode === "scale" ? selectedScale === note : selectedChordRoot === note;
@@ -61,7 +60,7 @@ const UIButtons: React.FC<UIButtonsProps> = ({ selectedScale, selectedChordRoot,
 
       <div className='flex flex-col gap-4'>
         <div className='flex items-center gap-2'>
-          <span className='text-xl font-semibold'>2. Select a Scale Type</span>
+          <span className='text-xl font-semibold'>2. Select Scale</span>
           {scaleTypes.map((type) => (
             <button
               key={type}
@@ -76,7 +75,7 @@ const UIButtons: React.FC<UIButtonsProps> = ({ selectedScale, selectedChordRoot,
         </div>
 
         <div className='flex items-center gap-2'>
-          <span className='text-xl font-semibold'>or Select a Chord Type</span>
+          <span className='text-xl font-semibold'>Select Chord</span>
           {chordTypes.map((type) => (
             <button
               onClick={() => {
