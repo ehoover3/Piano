@@ -80,26 +80,6 @@ export default function Home() {
     setSelectedScale(mappedNote);
   };
 
-  // const cycleScaleType = () => {
-  //   setScaleType((prev) => {
-  //     if (prev === "Major") return "Natural Minor";
-  //     if (prev === "Natural Minor") return "Harmonic Minor";
-  //     if (prev === "Harmonic Minor") return "Melodic Minor";
-  //     return "Major";
-  //   });
-  //   setSelectedChordRoot(null);
-  // };
-
-  const cycleChordType = () => {
-    setSelectedScale(null);
-    setChordType((prev) => {
-      const chordTypes = ["Major", "Minor", "Diminished", "Augmented", "Sus2", "Sus4", "Major Seventh", "Minor Seventh", "Dominant Seventh", "Diminished Seventh", "Half-Diminished Seventh", "Minor-Major Seventh", "Augmented Seventh", "Augmented Major Seventh"] as const;
-      const currentIndex = chordTypes.indexOf(prev);
-      const nextIndex = (currentIndex + 1) % chordTypes.length;
-      return chordTypes[nextIndex];
-    });
-  };
-
   const getChordNotes = (root: string, type: "Major" | "Minor" | "Diminished" | "Augmented" | "Sus2" | "Sus4" | "Major Seventh" | "Minor Seventh" | "Dominant Seventh" | "Diminished Seventh" | "Half-Diminished Seventh" | "Minor-Major Seventh" | "Augmented Seventh" | "Augmented Major Seventh") => {
     const chromatic = ["C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"];
     const normalizedRoot = enharmonicMap[root] || root; // 👈 Normalize flat to sharp
@@ -153,12 +133,12 @@ export default function Home() {
 
   const handleSelectChord = (note: string | null) => {
     setSelectedChordRoot(note);
-    setSelectedScale(null); // Clear scale selection
+    setSelectedScale(null);
   };
 
   return (
     <div className='flex flex-col items-center justify-center min-h-screen p-4 bg-gray-100'>
-      <UIButtons selectedScale={selectedScale} selectedChordRoot={selectedChordRoot} scaleType={scaleType} chordType={chordType} setScaleType={setScaleType} cycleChordType={cycleChordType} handleSelectScale={handleSelectScale} handleSelectChord={handleSelectChord} clearScale={() => setSelectedScale(null)} />
+      <UIButtons selectedScale={selectedScale} selectedChordRoot={selectedChordRoot} scaleType={scaleType} chordType={chordType} setScaleType={setScaleType} setChordType={setChordType} handleSelectScale={handleSelectScale} handleSelectChord={handleSelectChord} clearScale={() => setSelectedScale(null)} />
       <Keyboard octaves={octaves} whiteNotesBase={whiteNotesBase} blackNotesBase={blackNotesBase} handlePlayNote={handlePlayNote} getKeyColor={getKeyColor} />
       {playedNote && (
         <div className='mt-6 text-lg'>

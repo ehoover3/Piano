@@ -12,16 +12,16 @@ type UIButtonsProps = {
   scaleType: ScaleType;
   chordType: ChordType;
   setScaleType: (type: ScaleType) => void;
-  cycleChordType: () => void;
+  setChordType: (type: ChordType) => void;
   handleSelectScale: (scale: string) => void;
   handleSelectChord: (chordRoot: string | null) => void;
   clearScale: () => void;
 };
 
-const UIButtons: React.FC<UIButtonsProps> = ({ selectedScale, selectedChordRoot, scaleType, chordType, setScaleType, cycleChordType, handleSelectScale, handleSelectChord, clearScale }) => {
+const UIButtons: React.FC<UIButtonsProps> = ({ selectedScale, selectedChordRoot, scaleType, chordType, setScaleType, setChordType, handleSelectScale, handleSelectChord, clearScale }) => {
   const chromaticNotes = ["C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"];
   const scaleTypes: ScaleType[] = ["Major", "Natural Minor", "Harmonic Minor", "Melodic Minor"];
-
+  const chordTypes: ChordType[] = ["Major", "Minor", "Diminished", "Augmented", "Sus2", "Sus4", "Major Seventh", "Minor Seventh", "Dominant Seventh", "Diminished Seventh", "Half-Diminished Seventh", "Minor-Major Seventh", "Augmented Seventh", "Augmented Major Seventh"];
   const [selectionMode, setSelectionMode] = useState<"scale" | "chord">("scale");
 
   const handleNoteClick = (note: string) => {
@@ -67,7 +67,6 @@ const UIButtons: React.FC<UIButtonsProps> = ({ selectedScale, selectedChordRoot,
               key={type}
               onClick={() => {
                 setSelectionMode("scale");
-                // simulate selecting this scale type, assuming it's controlled externally
                 if (type !== scaleType) setScaleType(type);
               }}
               className={`px-3 py-1 rounded-md border ${type === scaleType ? "bg-blue-600 text-white" : "bg-gray-200 text-black"}`}>
@@ -78,14 +77,16 @@ const UIButtons: React.FC<UIButtonsProps> = ({ selectedScale, selectedChordRoot,
 
         <div className='flex items-center gap-2'>
           <span className='text-xl font-semibold'>or Select a Chord Type</span>
-          <button
-            onClick={() => {
-              cycleChordType();
-              setSelectionMode("chord");
-            }}
-            className={`px-3 py-1 rounded-md border text-white ${selectedChordRoot ? "bg-green-600" : "bg-gray-600"}`}>
-            {chordType}
-          </button>
+          {chordTypes.map((type) => (
+            <button
+              onClick={() => {
+                setChordType(type);
+                setSelectionMode("chord");
+              }}
+              className={`px-3 py-1 rounded-md border text-white ${selectedChordRoot ? "bg-green-600" : "bg-gray-600"}`}>
+              {type}
+            </button>
+          ))}
         </div>
       </div>
     </div>
