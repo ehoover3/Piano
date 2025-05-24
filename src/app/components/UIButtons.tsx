@@ -11,8 +11,6 @@ type NoteSelectorProps = {
   currentType: string;
   selectedNote: string | null;
   typeColor: string;
-  sharpKeys: string[];
-  flatKeys: string[];
   cycleType: () => void;
   handleSelect: (note: string | null) => void;
   isScale?: boolean;
@@ -66,27 +64,8 @@ const UIButtons: React.FC<UIButtonsProps> = ({ selectedScale, selectedChordRoot,
 
   return (
     <div className='col-span-4 grid grid-cols-2 gap-4'>
-      <NoteSelector
-        title='Scales'
-        currentType={scaleType}
-        selectedNote={selectedScale}
-        typeColor={selectedScale ? "blue" : "gray"}
-        sharpKeys={[]} // no longer needed
-        flatKeys={[]} // no longer needed
-        cycleType={cycleScaleType}
-        handleSelect={(note) => (note ? handleSelectScale(note) : clearScale())}
-        isScale
-      />
-      <NoteSelector
-        title='Chords'
-        currentType={chordType}
-        selectedNote={selectedChordRoot}
-        typeColor={selectedChordRoot ? "green" : "gray"}
-        sharpKeys={[]} // no longer needed
-        flatKeys={[]} // no longer needed
-        cycleType={cycleChordType}
-        handleSelect={handleSelectChord}
-      />
+      <NoteSelector title='Scales' currentType={scaleType} selectedNote={selectedScale} typeColor={selectedScale ? "blue" : "gray"} cycleType={cycleScaleType} handleSelect={(note) => (note ? handleSelectScale(note) : clearScale())} isScale />
+      <NoteSelector title='Chords' currentType={chordType} selectedNote={selectedChordRoot} typeColor={selectedChordRoot ? "green" : "gray"} cycleType={cycleChordType} handleSelect={handleSelectChord} />
     </div>
   );
 };
