@@ -59,9 +59,6 @@ type UIButtonsProps = {
 };
 
 const UIButtons: React.FC<UIButtonsProps> = ({ selectedScale, selectedChordRoot, scaleType, chordType, cycleScaleType, cycleChordType, handleSelectScale, handleSelectChord, clearScale }) => {
-  const sharpKeys = ["C", "G", "D", "A", "E", "B", "F#"];
-  const flatKeys = ["F", "Bb", "Eb", "Ab", "Db", "Gb"];
-
   return (
     <div className='col-span-4 grid grid-cols-2 gap-4'>
       <NoteSelector title='Scales' currentType={scaleType} selectedNote={selectedScale} typeColor={selectedScale ? "blue" : "gray"} cycleType={cycleScaleType} handleSelect={(note) => (note ? handleSelectScale(note) : clearScale())} isScale />
