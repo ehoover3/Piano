@@ -41,31 +41,8 @@ const UIButtons: React.FC<UIButtonsProps> = ({ selectedScale, selectedChordRoot,
 
   return (
     <div className='col-span-4 space-y-4'>
-      {/* Header with Scale and Chord type controls */}
-      <div className='flex justify-between items-center'>
-        <div className='flex items-center gap-2'>
-          <span className='text-xl font-semibold'>Scales</span>
-          <button onClick={cycleScaleType} className={`px-3 py-1 rounded-md border text-white ${selectedScale ? "bg-blue-600" : "bg-gray-600"}`}>
-            {scaleType}
-          </button>
-          <button onClick={() => setSelectionMode("scale")} className={`px-2 py-1 text-sm rounded ${selectionMode === "scale" ? "bg-blue-300" : "bg-gray-200"}`}>
-            Select
-          </button>
-        </div>
-
-        <div className='flex items-center gap-2'>
-          <span className='text-xl font-semibold'>Chords</span>
-          <button onClick={cycleChordType} className={`px-3 py-1 rounded-md border text-white ${selectedChordRoot ? "bg-green-600" : "bg-gray-600"}`}>
-            {chordType}
-          </button>
-          <button onClick={() => setSelectionMode("chord")} className={`px-2 py-1 text-sm rounded ${selectionMode === "chord" ? "bg-green-300" : "bg-gray-200"}`}>
-            Select
-          </button>
-        </div>
-      </div>
-
-      {/* Unified chromatic note selector */}
       <div className='flex flex-wrap gap-2 items-center'>
+        <div className='text-xl font-semibold'>1. Select a Note</div>
         {chromaticNotes.map((note) => {
           const displayNote = selectionMode === "scale" ? enharmonicMap[note] || note : note;
           const isSelected = selectionMode === "scale" ? selectedScale === note : selectedChordRoot === note;
@@ -79,6 +56,31 @@ const UIButtons: React.FC<UIButtonsProps> = ({ selectedScale, selectedChordRoot,
         <button onClick={handleClear} className='px-3 py-1 rounded-md border bg-red-400 text-white'>
           Clear
         </button>
+      </div>
+      <div className='flex flex-col gap-4'>
+        <div className='flex items-center gap-2'>
+          <span className='text-xl font-semibold'>2. Select a Scale</span>
+          <button
+            onClick={() => {
+              cycleScaleType();
+              setSelectionMode("scale");
+            }}
+            className={`px-3 py-1 rounded-md border text-white ${selectedScale ? "bg-blue-600" : "bg-gray-600"}`}>
+            {scaleType}
+          </button>
+        </div>
+
+        <div className='flex items-center gap-2'>
+          <span className='text-xl font-semibold'> or Chord</span>
+          <button
+            onClick={() => {
+              cycleChordType();
+              setSelectionMode("chord");
+            }}
+            className={`px-3 py-1 rounded-md border text-white ${selectedChordRoot ? "bg-green-600" : "bg-gray-600"}`}>
+            {chordType}
+          </button>
+        </div>
       </div>
     </div>
   );
