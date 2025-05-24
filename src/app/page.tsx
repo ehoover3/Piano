@@ -80,15 +80,15 @@ export default function Home() {
     setSelectedScale(mappedNote);
   };
 
-  const cycleScaleType = () => {
-    setScaleType((prev) => {
-      if (prev === "Major") return "Natural Minor";
-      if (prev === "Natural Minor") return "Harmonic Minor";
-      if (prev === "Harmonic Minor") return "Melodic Minor";
-      return "Major";
-    });
-    setSelectedChordRoot(null);
-  };
+  // const cycleScaleType = () => {
+  //   setScaleType((prev) => {
+  //     if (prev === "Major") return "Natural Minor";
+  //     if (prev === "Natural Minor") return "Harmonic Minor";
+  //     if (prev === "Harmonic Minor") return "Melodic Minor";
+  //     return "Major";
+  //   });
+  //   setSelectedChordRoot(null);
+  // };
 
   const cycleChordType = () => {
     setSelectedScale(null);
@@ -158,7 +158,7 @@ export default function Home() {
 
   return (
     <div className='flex flex-col items-center justify-center min-h-screen p-4 bg-gray-100'>
-      <UIButtons selectedScale={selectedScale} selectedChordRoot={selectedChordRoot} scaleType={scaleType} chordType={chordType} cycleScaleType={cycleScaleType} cycleChordType={cycleChordType} handleSelectScale={handleSelectScale} handleSelectChord={handleSelectChord} clearScale={() => setSelectedScale(null)} />
+      <UIButtons selectedScale={selectedScale} selectedChordRoot={selectedChordRoot} scaleType={scaleType} chordType={chordType} setScaleType={setScaleType} cycleChordType={cycleChordType} handleSelectScale={handleSelectScale} handleSelectChord={handleSelectChord} clearScale={() => setSelectedScale(null)} />
       <Keyboard octaves={octaves} whiteNotesBase={whiteNotesBase} blackNotesBase={blackNotesBase} handlePlayNote={handlePlayNote} getKeyColor={getKeyColor} />
       {playedNote && (
         <div className='mt-6 text-lg'>
