@@ -20,8 +20,8 @@ const blackNotesBase = [
 export default function Home() {
   const [playedNote, setPlayedNote] = useState<string | null>(null);
   const [selectedNote, setSelectedNote] = useState<string | null>("C");
-  const [selectedScale, setSelectedScale] = useState<null | "Major" | "Natural Minor" | "Harmonic Minor" | "Melodic Minor">(null);
   const [selectedChord, setSelectedChord] = useState<null | "Major" | "Minor" | "Diminished" | "Augmented" | "Sus2" | "Sus4" | "Major Seventh" | "Minor Seventh" | "Dominant Seventh" | "Diminished Seventh" | "Half-Diminished Seventh" | "Minor-Major Seventh" | "Augmented Seventh" | "Augmented Major Seventh">(null);
+  const [selectedScale, setSelectedScale] = useState<null | "Major" | "Natural Minor" | "Harmonic Minor" | "Melodic Minor">(null);
 
   const playSound = (note: string, octave: number) => {
     const audioContext = new (window.AudioContext || (window as any).webkitAudioContext)();
@@ -127,7 +127,7 @@ export default function Home() {
 
   return (
     <div className='flex flex-col items-center justify-center min-h-screen p-4 bg-gray-100'>
-      <UIButtons selectedNote={selectedNote} scaleType={selectedScale} setScaleType={setSelectedScale} setChordType={setSelectedChord} setSelectedNote={setSelectedNote} />
+      <UIButtons selectedNote={selectedNote} selectedScale={selectedScale} setSelectedScale={setSelectedScale} setSelectedChord={setSelectedChord} setSelectedNote={setSelectedNote} />
       <Keyboard octaves={octaves} whiteNotesBase={whiteNotesBase} blackNotesBase={blackNotesBase} handlePlayNote={handlePlayNote} getKeyColor={getKeyColor} />
       {playedNote && (
         <div className='mt-6 text-lg'>
