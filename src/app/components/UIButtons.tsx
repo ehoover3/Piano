@@ -3,8 +3,8 @@
 import React, { useState } from "react";
 import { enharmonicMap } from "../scales";
 
-type ScaleType = "Major" | "Natural Minor" | "Harmonic Minor" | "Melodic Minor";
-type ChordType = "Major" | "Minor" | "Diminished" | "Augmented" | "Sus2" | "Sus4" | "Major Seventh" | "Minor Seventh" | "Dominant Seventh" | "Diminished Seventh" | "Half-Diminished Seventh" | "Minor-Major Seventh" | "Augmented Seventh" | "Augmented Major Seventh";
+type ScaleType = null | "Major" | "Natural Minor" | "Harmonic Minor" | "Melodic Minor";
+type ChordType = null | "Major" | "Minor" | "Diminished" | "Augmented" | "Sus2" | "Sus4" | "Major Seventh" | "Minor Seventh" | "Dominant Seventh" | "Diminished Seventh" | "Half-Diminished Seventh" | "Minor-Major Seventh" | "Augmented Seventh" | "Augmented Major Seventh";
 
 type UIButtonsProps = {
   selectedScale: string | null;
@@ -14,10 +14,9 @@ type UIButtonsProps = {
   setChordType: (type: ChordType) => void;
   handleSelectScale: (scale: string) => void;
   handleSelectChord: (chordRoot: string | null) => void;
-  clearScale: () => void;
 };
 
-const UIButtons: React.FC<UIButtonsProps> = ({ selectedScale, selectedChordRoot, scaleType, setScaleType, setChordType, handleSelectScale, handleSelectChord, clearScale }) => {
+const UIButtons: React.FC<UIButtonsProps> = ({ selectedScale, selectedChordRoot, scaleType, setScaleType, setChordType, handleSelectScale, handleSelectChord }) => {
   const chromaticNotes = ["C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"];
   const scaleTypes: ScaleType[] = ["Major", "Natural Minor", "Harmonic Minor", "Melodic Minor"];
   const chordTypes: ChordType[] = ["Major", "Minor", "Diminished", "Augmented", "Sus2", "Sus4", "Major Seventh", "Minor Seventh", "Dominant Seventh", "Diminished Seventh", "Half-Diminished Seventh", "Minor-Major Seventh", "Augmented Seventh", "Augmented Major Seventh"];
@@ -28,14 +27,6 @@ const UIButtons: React.FC<UIButtonsProps> = ({ selectedScale, selectedChordRoot,
       handleSelectScale(note);
     } else {
       handleSelectChord(note);
-    }
-  };
-
-  const handleClear = () => {
-    if (selectionMode === "scale") {
-      clearScale();
-    } else {
-      handleSelectChord(null);
     }
   };
 
@@ -53,9 +44,6 @@ const UIButtons: React.FC<UIButtonsProps> = ({ selectedScale, selectedChordRoot,
             </button>
           );
         })}
-        <button onClick={handleClear} className='px-3 py-1 rounded-md border bg-red-400 text-white'>
-          Clear
-        </button>
       </div>
 
       <div className='flex flex-col gap-4'>
@@ -66,7 +54,9 @@ const UIButtons: React.FC<UIButtonsProps> = ({ selectedScale, selectedChordRoot,
               key={type}
               onClick={() => {
                 setSelectionMode("scale");
+                setChordType(null);
                 if (type !== scaleType) setScaleType(type);
+                if (selectedChordRoot) handleSelectScale(selectedChordRoot);
               }}
               className={`px-3 py-1 rounded-md border ${type === scaleType ? "bg-blue-600 text-white" : "bg-gray-200 text-black"}`}>
               {type}
@@ -78,9 +68,13 @@ const UIButtons: React.FC<UIButtonsProps> = ({ selectedScale, selectedChordRoot,
           <span className='text-xl font-semibold'>Select Chord</span>
           {chordTypes.map((type) => (
             <button
+              key={type}
               onClick={() => {
                 setChordType(type);
                 setSelectionMode("chord");
+                if (selectedScale) {
+                  handleSelectChord(selectedScale); // set chord root to previously selected scale note
+                }
               }}
               className={`px-3 py-1 rounded-md border text-white ${selectedChordRoot ? "bg-green-600" : "bg-gray-600"}`}>
               {type}

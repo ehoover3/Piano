@@ -18,10 +18,10 @@ const blackNotesBase = [
 
 export default function Home() {
   const [playedNote, setPlayedNote] = useState<string | null>(null);
-  const [selectedScale, setSelectedScale] = useState<string | null>(null);
-  const [scaleType, setScaleType] = useState<"Major" | "Natural Minor" | "Harmonic Minor" | "Melodic Minor">("Major");
-  const [chordType, setChordType] = useState<"Major" | "Minor" | "Diminished" | "Augmented" | "Sus2" | "Sus4" | "Major Seventh" | "Minor Seventh" | "Dominant Seventh" | "Diminished Seventh" | "Half-Diminished Seventh" | "Minor-Major Seventh" | "Augmented Seventh" | "Augmented Major Seventh">("Major");
+  const [selectedScale, setSelectedScale] = useState<string | null>("C");
   const [selectedChordRoot, setSelectedChordRoot] = useState<string | null>(null);
+  const [scaleType, setScaleType] = useState<null | "Major" | "Natural Minor" | "Harmonic Minor" | "Melodic Minor">(null);
+  const [chordType, setChordType] = useState<null | "Major" | "Minor" | "Diminished" | "Augmented" | "Sus2" | "Sus4" | "Major Seventh" | "Minor Seventh" | "Dominant Seventh" | "Diminished Seventh" | "Half-Diminished Seventh" | "Minor-Major Seventh" | "Augmented Seventh" | "Augmented Major Seventh">(null);
 
   const playSound = (note: string, octave: number) => {
     const audioContext = new (window.AudioContext || (window as any).webkitAudioContext)();
@@ -48,7 +48,7 @@ export default function Home() {
   const getKeyColor = (note: string) => {
     const normalizedNote = enharmonicMap[note] || note;
     const normalizedChordRoot = selectedChordRoot ? enharmonicMap[selectedChordRoot] || selectedChordRoot : null;
-    if (selectedChordRoot) {
+    if (selectedChordRoot && chordType) {
       const chordNotes = getChordNotes(selectedChordRoot, chordType).map((n) => enharmonicMap[n] || n);
       if (normalizedNote === normalizedChordRoot) return "#248232"; // Green for root
       if (chordNotes.includes(normalizedNote)) return "#007BFF"; // Blue for chord tones
@@ -138,7 +138,7 @@ export default function Home() {
 
   return (
     <div className='flex flex-col items-center justify-center min-h-screen p-4 bg-gray-100'>
-      <UIButtons selectedScale={selectedScale} selectedChordRoot={selectedChordRoot} scaleType={scaleType} setScaleType={setScaleType} setChordType={setChordType} handleSelectScale={handleSelectScale} handleSelectChord={handleSelectChord} clearScale={() => setSelectedScale(null)} />
+      <UIButtons selectedScale={selectedScale} selectedChordRoot={selectedChordRoot} scaleType={scaleType} setScaleType={setScaleType} setChordType={setChordType} handleSelectScale={handleSelectScale} handleSelectChord={handleSelectChord} />
       <Keyboard octaves={octaves} whiteNotesBase={whiteNotesBase} blackNotesBase={blackNotesBase} handlePlayNote={handlePlayNote} getKeyColor={getKeyColor} />
       {playedNote && (
         <div className='mt-6 text-lg'>
