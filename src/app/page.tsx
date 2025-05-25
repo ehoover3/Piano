@@ -6,6 +6,7 @@ import { getFrequency } from "./utils/frequencies";
 import Keyboard from "./components/Keyboard";
 import UIButtons from "./components/UIButtons";
 
+const colors = { black: "#339BFF", blue: "#007BFF", green: "#248232" };
 const octaves = [3, 4, 5, 6];
 const whiteNotesBase = ["C", "D", "E", "F", "G", "A", "B"];
 const blackNotesBase = [
@@ -18,8 +19,7 @@ const blackNotesBase = [
 
 export default function Home() {
   const [playedNote, setPlayedNote] = useState<string | null>(null);
-  const [selectedScale, setSelectedScale] = useState<string | null>("C");
-  const [selectedChordRoot, setSelectedChordRoot] = useState<string | null>(null);
+  const [selectedNote, setSelectedNote] = useState<string | null>("C");
   const [scaleType, setScaleType] = useState<null | "Major" | "Natural Minor" | "Harmonic Minor" | "Melodic Minor">(null);
   const [chordType, setChordType] = useState<null | "Major" | "Minor" | "Diminished" | "Augmented" | "Sus2" | "Sus4" | "Major Seventh" | "Minor Seventh" | "Dominant Seventh" | "Diminished Seventh" | "Half-Diminished Seventh" | "Minor-Major Seventh" | "Augmented Seventh" | "Augmented Major Seventh">(null);
 
@@ -47,42 +47,36 @@ export default function Home() {
 
   const getKeyColor = (note: string) => {
     const normalizedNote = enharmonicMap[note] || note;
-    const normalizedChordRoot = selectedChordRoot ? enharmonicMap[selectedChordRoot] || selectedChordRoot : null;
-    if (selectedChordRoot && chordType) {
-      const chordNotes = getChordNotes(selectedChordRoot, chordType).map((n) => enharmonicMap[n] || n);
-      if (normalizedNote === normalizedChordRoot) return "#248232"; // Green for root
-      if (chordNotes.includes(normalizedNote)) return "#007BFF"; // Blue for chord tones
+    const normalizedChordRoot = selectedNote ? enharmonicMap[selectedNote] || selectedNote : null;
+    if (selectedNote && chordType) {
+      const chordNotes = getChordNotes(selectedNote, chordType).map((n) => enharmonicMap[n] || n);
+      if (normalizedNote === normalizedChordRoot) return colors.green;
+      if (chordNotes.includes(normalizedNote)) return colors.blue;
       return "";
     }
-    if (selectedScale) {
+    if (selectedNote) {
       let scaleNotes: string[] | undefined;
       if (scaleType === "Major") {
-        scaleNotes = majorScales[selectedScale];
+        scaleNotes = majorScales[selectedNote];
       } else if (scaleType === "Natural Minor") {
-        scaleNotes = naturalMinorScales[selectedScale];
+        scaleNotes = naturalMinorScales[selectedNote];
       } else if (scaleType === "Harmonic Minor") {
-        scaleNotes = harmonicMinorScales[selectedScale];
+        scaleNotes = harmonicMinorScales[selectedNote];
       } else if (scaleType === "Melodic Minor") {
-        scaleNotes = melodicMinorScales[selectedScale];
+        scaleNotes = melodicMinorScales[selectedNote];
       }
       if (!scaleNotes) return "";
-      if (note === selectedScale) return "#248232"; // Green for root
+      if (note === selectedNote) return colors.green;
       if (scaleNotes.includes(note)) {
-        return isBlackNote(note) ? "#339BFF" : "#007BFF";
+        return isBlackNote(note) ? colors.black : colors.blue;
       }
     }
     return "";
   };
 
-  const handleSelectScale = (note: string) => {
-    const mappedNote = enharmonicMap[note] || note;
-    setSelectedChordRoot(null);
-    setSelectedScale(mappedNote);
-  };
-
   const getChordNotes = (root: string, type: "Major" | "Minor" | "Diminished" | "Augmented" | "Sus2" | "Sus4" | "Major Seventh" | "Minor Seventh" | "Dominant Seventh" | "Diminished Seventh" | "Half-Diminished Seventh" | "Minor-Major Seventh" | "Augmented Seventh" | "Augmented Major Seventh") => {
     const chromatic = ["C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"];
-    const normalizedRoot = enharmonicMap[root] || root; // 👈 Normalize flat to sharp
+    const normalizedRoot = enharmonicMap[root] || root;
     const index = chromatic.indexOf(normalizedRoot);
     if (index === -1) return [];
 
@@ -131,20 +125,20 @@ export default function Home() {
     }
   };
 
-  const handleSelectChord = (note: string | null) => {
-    setSelectedChordRoot(note);
-    setSelectedScale(null);
-  };
-
   return (
     <div className='flex flex-col items-center justify-center min-h-screen p-4 bg-gray-100'>
-      <UIButtons selectedScale={selectedScale} selectedChordRoot={selectedChordRoot} scaleType={scaleType} setScaleType={setScaleType} setChordType={setChordType} handleSelectScale={handleSelectScale} handleSelectChord={handleSelectChord} />
+      <UIButtons selectedNote={selectedNote} scaleType={scaleType} setScaleType={setScaleType} setChordType={setChordType} setSelectedNote={setSelectedNote} />
       <Keyboard octaves={octaves} whiteNotesBase={whiteNotesBase} blackNotesBase={blackNotesBase} handlePlayNote={handlePlayNote} getKeyColor={getKeyColor} />
       {playedNote && (
         <div className='mt-6 text-lg'>
           Played: <span className='font-semibold'>{playedNote}</span>
         </div>
       )}
+      <div>TEST</div>
+      <div>playedNote: {playedNote}</div>
+      <div>selectedNote: {selectedNote}</div>
+      <div>scaleType: {scaleType}</div>
+      <div>chordType: {chordType}</div>
     </div>
   );
 }
